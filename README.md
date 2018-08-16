@@ -9,7 +9,7 @@ Some small tools to ease developer life.
 **docker deploy**
 
 ```
-curl -o /usr/local/bin/docker-deploy https://raw.githubusercontent.com/ambimax/developer-tools/master/docker-deploy.sh && \ 
+curl -o /usr/local/bin/docker-deploy https://raw.githubusercontent.com/ambimax/developer-tools/master/docker-deploy.sh
 chmod +x /usr/local/bin/docker-deploy
 ```
 
