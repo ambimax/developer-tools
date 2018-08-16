@@ -11,7 +11,7 @@ env:
 
 script:
   - ./docker-deploy.sh --package-url=${PACKAGE_URL} \
-    --database-url=${DATABASE_URL} \
+    --database-url="${DATABASE_URL}" \
     --dir=${DIR} \
     --extra-package \
     --start-containers
@@ -25,3 +25,6 @@ script:
 after_failure:
   - ls -la
   - ls -la ${DIR}/
+  - echo "Directory: ${DIR}"
+  - echo "Database Url: ${DATABASE_URL}"
+  - echo "Database Url: ${DATABASE_URL}"
