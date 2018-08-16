@@ -1,0 +1,29 @@
+sudo: required
+services: docker
+
+env:
+  global:
+    - DIR=/tmp/docker-test
+    - secure: "HVfvQkdjLNztbNlfuM3xt4TpKNBuc42G9Teh5/ouUV3dRBRQNhW3Nm0/KadPEbteJ6sqPIWstwgl2tBvMh/eiSd2iaqojsklY1VJPZBoB4bm1G9E54n9tNwue4gO7AxDlVIvtoLRCGSpzeU3pKzmAdgKG+dxYFT456gpCoHBolEcRXTcAgg5/+nD0dScYQXFqPgl9DHFhC2T2U+8uIQ11IHtVtobin4sVKtg+pPopL1dMWFzlO3Tee5VMbVPw6KEoFBoqyW+fja7pMFpuq+fMTgTHPCIygddTJ57pgehKOBH5r9kTYrrP2Cq/zfxA9iKi3BClouA8yX8M0nMrWiwtcbdF88/GgQMEOIR9GheheyQ0jrAJhA9YqWuxiA+1liWPYvEw9kFBUYt59H4sX1JBd/sE4mcD7M4jGEXP1NyNAQMcMpAlYwmQduat88YwRlShtKtzGfsrPxiByeKU42QnKGqRFH2WN/HAAgRAM+AwPV++5l1/aIk7w0OsJnBvMZH71nOMiJ2VglrCkkxS9sB/9nqvFU4b17piJSJPyPQQfuoypDyNRl5F0gowubDYaTmknJMWE6y4oppJgV//E1c4SVpNzbOkX/Z1kR42kK/56NbU1RGTyTeHEmV8mCV8S2ydf6/vZR8BYJK1nV55IMW1BAEi4I4Cpw7/pHoaRsMnos="
+    - secure: "kWrtmasoMN6Ve7/GA8OF1L2hpgc+o1SID5oaZSoCAI7eQKqCk9IlefVX1Ilyyw62uXW4i3dYz7rJ+5CMin4JsdEM3Tp/5C5OTWJ1OL06EY6U2J+0CrOElcYMVhqOVKtmYgDmI+rojnt13XQWyJcv0EFUga5v4aKVpNE/7IJC2tTYnM402nAE/1Fnpi9/xBLFS9LZjxPLm5WjdTJBpIAneJZJoavkHqb82zLstGG57Gi2VGv3vqiCAq5ldf1dCHtSgUPxAmprwKUXAqJ/SrbTi4Z5FuXFd5zbn6zDXD3TYcD3R/k7mqx1qT0smZdk3wrNmmV0iYBugl7bR+ZhNul1QfRGTvIV1qGhQpZiuQZ/JhvriIrXUHy3nL1vqPjymkvQrw/MGSe5OWUiQw7DjRFTPqCms3kxMo/qA6DQu/L9VWrTIgVGZjMGF8qdsFpRNeOnlsSXtjeXx0A5xQtD1XPbRW8WW9ziZeekAtUGALoSvnOv8cIAsMkhd2XWvH07FqRDpqGxlWuKOJReVlmcInOKOfnmmSGie2jH0c4S6/qSK1pzimIQRK37WdrcV1tM1edYOdqn6iCLaqZnSlfebvPU3y7pD3o2Uci4PrkLDgiwqohBi5FDiEiscrP6XaU9km/o8QqCmJHhcq8B0XsG9IYBVRH/wFiSVNLtmPeg4RoKOfQ="
+
+  matrix:
+    - PACKAGE_URL: tests/package.tar.gz
+      DATABASE_URL: tests/database.sql.gz
+
+script:
+  - ./deploy-docker.sh --package-url=${PACKAGE_URL} \
+      --database-url=${DATABASE_URL} \
+      --dir=${DIR} \
+      --extra-package \
+      --start-containers
+
+  - test -e ${DIR}/database.tar.gz
+  - test -e ${DIR}/docker-compose.yml
+  - test -e ${DIR}/extras
+  - curl localhost
+  - curl localhost | grep 'docker::success'
+
+after_failure:
+  - ls -la
+  - ls -la ${DIR}/
