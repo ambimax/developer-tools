@@ -12,12 +12,15 @@ COLOR_WHITE="\033[0;37m"
 COLOR_RESET="\033[0m"
 
 function error_exit {
+    echo ""
 	echo -e "${COLOR_RED}${1}${COLOR_RESET}" 1>&2
+	echo ""
 	exit 1
 }
 
 function usage_exit {
-    echo "$1" 1>&2
+    echo ""
+    echo -e "${COLOR_RED}${1}${COLOR_RESET}" 1>&2
     show_help 1
 }
 
@@ -59,22 +62,24 @@ function show_help {
     echo "      --package-url=<packageUrl> \ "
     echo "      --database-url=<databaseUrl> \ "
     echo "      --dir=<installDir> \ "
-    echo "      --env=<environment> \ "
-    echo "      --extra-package \ "
-    echo "      --start-containers \ "
-    echo "      --username=<username> \ "
-    echo "      --password=<password> \ "
-    echo "      --aws-profile=<awsProfile> \ "
+    echo "      [--env=<environment>] \ "
+    echo "      [--extra-package] \ "
+    echo "      [--start-containers] \ "
+    echo "      [--username=<username>] \ "
+    echo "      [--password=<password>] \ "
+    echo "      [--aws-profile=<awsProfile>] \ "
     echo ""
     echo "--package-url         Path to the build package (http, S3 or local file)"
     echo "--database-url        Path to the database package (http, S3 or local file)"
     echo "--dir                 Target dir"
-    echo "--env                 Environment (docker, devbox, staging, etc...)"
-    echo "--extra-package       Install extra build package (like phpunit)"
-    echo "--start-containers    Start docker containers after downloading"
-    echo "--username            Username for download credentials"
-    echo "--password            Password for download credentials"
-    echo "--aws-profile         Define aws profile"
+    echo "--env                 Environment docker, devbox, staging (optional, default: docker)"
+    echo "--extra-package       Install extra build package (optional)"
+    echo "--start-containers    Start docker containers after downloading (optional)"
+    echo "--username            Username for download credentials (optional)"
+    echo "--password            Password for download credentials (optional)"
+    echo "--aws-profile         Define aws profile (optional)"
+    echo ""
+    echo "--version             Show version"
     echo ""
 
     exit $1
@@ -121,6 +126,11 @@ while :; do
             if [ -x "$(command -v docker-compose ps)" ]; then error_exit "docker-compose is not installed"; fi
             START_CONTAINERS=1
             ;;
+        --version)
+            echo " 1.0.0 docker-deploy by ambimax® GmbH"
+            echo ""
+            exit 0;
+            ;;
         *) # no more options, break out of loop
         break
     esac
@@ -128,8 +138,8 @@ while :; do
 done
 
 
-if [ -z "${PACKAGEURL}" ]; then usage_exit "ERROR: Please provide package url (e.g. --package-url=s3://mybucket/demo.tar.gz)"; fi
-if [ -z "${DATABASEURL}" ]; then usage_exit "ERROR: Please provide database url (e.g. --database-url=s3://mybucket/database.tar.gz)"; fi
+if [ -z "${PACKAGEURL}" ]; then usage_exit "ERROR: Please provide package url (e.g. --package-url=s3://mybucket/package.tar.gz)"; fi
+if [ -z "${DATABASEURL}" ]; then usage_exit "ERROR: Please provide database url (e.g. --database-url=s3://mybucket/database.sql.gz)"; fi
 if [ -z "${DIR}" ]; then usage_exit "ERROR: Please provide a target dircteory (e.g. --dir=/var/www/demo/)"; fi
 if [ -z "${ENVIRONMENT}" ]; then usage_exit "ERROR: Please provide an environment code (e.g. --env=staging)"; fi
 
