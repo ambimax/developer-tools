@@ -21,13 +21,15 @@ script:
       --database-url="${DATABASE_URL}" \
       --dir=${DIR} \
       --extra-package \
-      --start-containers
+      --start-containers \
+      --project-init="docker-compose exec nginx sh -c \"echo 'docker::init' > /var/www/htdocs/init.html\""
 
   - test -e ${DIR}/database.sql.gz
   - test -e ${DIR}/docker-compose.yml
   - test -e ${DIR}/extra/file.txt
   - curl localhost
   - curl localhost | grep 'docker::success'
+  - curl localhost/init.html | grep 'docker::init'
 
 after_failure:
   - ls -la

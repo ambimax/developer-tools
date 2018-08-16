@@ -51,6 +51,11 @@ function download {
 
         aws ${PROFILEPARAM} s3 cp "${URL}" "${DEST}" || error_exit "Error while downloading base package from S3"
     fi
+
+    # check if file is there
+    if [ ! -f "${DEST}" ]; then
+        error_exit "Download ${URL} to ${DEST} failed!"
+    fi
 }
 
 
@@ -65,6 +70,7 @@ function show_help {
     echo "      [--env=<environment>] \ "
     echo "      [--extra-package] \ "
     echo "      [--start-containers] \ "
+    echo "      [--project-init=<initCommand>] \ "
     echo "      [--username=<username>] \ "
     echo "      [--password=<password>] \ "
     echo "      [--aws-profile=<awsProfile>] \ "
@@ -75,6 +81,7 @@ function show_help {
     echo "--env                 Environment docker, devbox, staging (optional, default: docker)"
     echo "--extra-package       Install extra build package (optional)"
     echo "--start-containers    Start docker containers after downloading (optional)"
+    echo "--project-init        Run a command to init project (optional)"
     echo "--username            Username for download credentials (optional)"
     echo "--password            Password for download credentials (optional)"
     echo "--aws-profile         Define aws profile (optional)"
@@ -126,6 +133,9 @@ while :; do
             if [ -x "$(command -v docker-compose ps)" ]; then error_exit "docker-compose is not installed"; fi
             START_CONTAINERS=1
             ;;
+        --project-init=?*)
+            PROJECT_INIT=${1#*=}
+            ;;
         --version)
             echo " 1.0.0 docker-deploy by ambimax® GmbH"
             echo ""
@@ -137,6 +147,7 @@ while :; do
     shift
 done
 
+#echo "$PROJECT_INIT"; exit 0;
 
 if [ -z "${PACKAGEURL}" ]; then usage_exit "ERROR: Please provide package url (e.g. --package-url=s3://mybucket/package.tar.gz)"; fi
 if [ -z "${DATABASEURL}" ]; then usage_exit "ERROR: Please provide database url (e.g. --database-url=s3://mybucket/database.sql.gz)"; fi
@@ -190,11 +201,13 @@ if [ "${START_CONTAINERS}" == 0 ] ; then
 fi
 
 
+
 ########################################################################################################################
 # Step 4: Download database
 ########################################################################################################################
 echo "Downloading database package..."
 download "${DATABASEURL}" "${DIR}/database.sql.gz"
+
 
 
 ########################################################################################################################
@@ -204,3 +217,19 @@ if [ ! -f "${DIR}/docker-compose.yml" ]; then error_exit "This package does not 
 echo "Starting docker containers"
 cd "${DIR}" || error_exit "Cannot enter installation dir"
 docker-compose up -d
+
+
+
+########################################################################################################################
+# Step 6: Project initialization
+########################################################################################################################
+if [ ! -z "${PROJECT_INIT}" ]; then
+    echo "Project initialization"
+    eval $PROJECT_INIT
+fi
+
+
+
+echo
+echo "Successfully completed installation."
+echo
