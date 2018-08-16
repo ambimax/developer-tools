@@ -6,8 +6,8 @@ env:
     - DIR=/tmp/docker-test
 
   matrix:
-    - PACKAGE_URL: tests/package.tar.gz
-      DATABASE_URL: tests/database.sql.gz
+    - PACKAGE_URL: tests/assets/package.tar.gz
+      DATABASE_URL: tests/assets/database.sql.gz
 
     - PACKAGE_URL: https://github.com/ambimax/developer-tools/raw/master/tests/package.tar.gz
       DATABASE_URL: https://github.com/ambimax/developer-tools/raw/master/tests/database.sql.gz
