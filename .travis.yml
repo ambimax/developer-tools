@@ -9,6 +9,9 @@ env:
     - PACKAGE_URL: tests/package.tar.gz
       DATABASE_URL: tests/database.sql.gz
 
+before_script:
+  - sudo apt install --only-upgrade docker-ce -y
+
 script:
   - >
     ./docker-deploy.sh --package-url=${PACKAGE_URL} \
@@ -17,9 +20,9 @@ script:
       --extra-package \
       --start-containers
 
-  - test -e ${DIR}/database.tar.gz
+  - test -e ${DIR}/database.sql.gz
   - test -e ${DIR}/docker-compose.yml
-  - test -e ${DIR}/extras
+  - test -e ${DIR}/extra/file.txt
   - curl localhost
   - curl localhost | grep 'docker::success'
 
