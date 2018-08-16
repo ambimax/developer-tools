@@ -19,8 +19,8 @@ chmod +x /usr/local/bin/docker-deploy
 Deploys project packages, pulls defined database dump and starts docker containers.
 
 ```
-deploy-docker --package-url=tests/package.tar.gz \
-    --database-url=tests/database.sql.gz \
+docker-deploy --package-url=tests/assets/package.tar.gz \
+    --database-url=tests/assets/database.sql.gz \
     --dir=/tmp/docker-deploy-test \
     --extra-package \
     --start-containers
