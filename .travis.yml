@@ -35,6 +35,6 @@ after_failure:
   - ls -la
   - ls -la ${DIR}/
   - echo ${DIR}
-  - echo ${DATABASE_URL}
+  - echo ${PACKAGE_URL}
   - echo ${DATABASE_URL}
   - docker-compose --version

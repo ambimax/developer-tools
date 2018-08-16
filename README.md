@@ -23,7 +23,8 @@ docker-deploy --package-url=tests/assets/package.tar.gz \
     --database-url=tests/assets/database.sql.gz \
     --dir=/tmp/docker-deploy-test \
     --extra-package \
-    --start-containers
+    --start-containers \
+    --project-init="docker-compose exec nginx sh -c \"echo 'docker::init' > /var/www/htdocs/init.html\""
 ```
 
 Sample packages are in this repo:
