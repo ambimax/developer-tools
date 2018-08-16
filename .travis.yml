@@ -11,10 +11,10 @@ env:
 
 script:
   - >
-    ./docker-deploy.sh --package-url=${PACKAGE_URL}
-      --database-url="${DATABASE_URL}"
-      --dir=${DIR}
-      --extra-package
+    ./docker-deploy.sh --package-url=${PACKAGE_URL} \
+      --database-url="${DATABASE_URL}" \
+      --dir=${DIR} \
+      --extra-package \
       --start-containers
 
   - test -e ${DIR}/database.tar.gz
