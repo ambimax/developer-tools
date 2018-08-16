@@ -32,3 +32,4 @@ after_failure:
   - echo ${DIR}
   - echo ${DATABASE_URL}
   - echo ${DATABASE_URL}
+  - docker-compose --version
