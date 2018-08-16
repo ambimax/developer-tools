@@ -1,0 +1,35 @@
+sudo: required
+services: docker
+
+env:
+  global:
+    - DIR=/tmp/docker-test
+
+  matrix:
+    - PACKAGE_URL: tests/package.tar.gz
+      DATABASE_URL: tests/database.sql.gz
+
+before_script:
+  - sudo apt install --only-upgrade docker-ce -y
+
+script:
+  - >
+    ./docker-deploy.sh --package-url=${PACKAGE_URL} \
+      --database-url="${DATABASE_URL}" \
+      --dir=${DIR} \
+      --extra-package \
+      --start-containers
+
+  - test -e ${DIR}/database.sql.gz
+  - test -e ${DIR}/docker-compose.yml
+  - test -e ${DIR}/extra/file.txt
+  - curl localhost
+  - curl localhost | grep 'docker::success'
+
+after_failure:
+  - ls -la
+  - ls -la ${DIR}/
+  - echo ${DIR}
+  - echo ${DATABASE_URL}
+  - echo ${DATABASE_URL}
+  - docker-compose --version
