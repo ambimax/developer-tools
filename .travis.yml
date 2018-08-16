@@ -10,11 +10,12 @@ env:
       DATABASE_URL: tests/database.sql.gz
 
 script:
-  - ./docker-deploy.sh --package-url=${PACKAGE_URL} \
-    --database-url="${DATABASE_URL}" \
-    --dir=${DIR} \
-    --extra-package \
-    --start-containers
+  - >
+    ./docker-deploy.sh --package-url=${PACKAGE_URL}
+      --database-url="${DATABASE_URL}"
+      --dir=${DIR}
+      --extra-package
+      --start-containers
 
   - test -e ${DIR}/database.tar.gz
   - test -e ${DIR}/docker-compose.yml
@@ -25,6 +26,6 @@ script:
 after_failure:
   - ls -la
   - ls -la ${DIR}/
-  - echo "Directory: ${DIR}"
-  - echo "Database Url: ${DATABASE_URL}"
-  - echo "Database Url: ${DATABASE_URL}"
+  - echo ${DIR}
+  - echo ${DATABASE_URL}
+  - echo ${DATABASE_URL}
