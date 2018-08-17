@@ -21,7 +21,7 @@ Deploys project packages, pulls defined database dump and starts docker containe
 ```
 docker-deploy --package-url=tests/assets/package.tar.gz \
     --database-url=tests/assets/database.sql.gz \
-    --dir=/tmp/docker-deploy-test \
+    --install-dir=/tmp/docker-deploy-test \
     --extra-package \
     --start-containers \
     --project-init="docker-compose exec nginx sh -c \"echo 'docker::init' > /var/www/htdocs/init.html\""

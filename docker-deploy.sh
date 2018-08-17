@@ -66,7 +66,7 @@ function show_help {
     echo "$0 \ "
     echo "      --package-url=<packageUrl> \ "
     echo "      --database-url=<databaseUrl> \ "
-    echo "      --dir=<installDir> \ "
+    echo "      --install-dir=<installDir> \ "
     echo "      [--env=<environment>] \ "
     echo "      [--extra-package] \ "
     echo "      [--start-containers] \ "
@@ -77,7 +77,7 @@ function show_help {
     echo ""
     echo "--package-url         Path to the build package (http, S3 or local file)"
     echo "--database-url        Path to the database package (http, S3 or local file)"
-    echo "--dir                 Target dir"
+    echo "--install-dir                 Target dir"
     echo "--env                 Environment docker, devbox, staging (optional, default: docker)"
     echo "--extra-package       Install extra build package (optional)"
     echo "--start-containers    Start docker containers after downloading (optional)"
@@ -110,8 +110,8 @@ while :; do
         --database-url=?*)
             DATABASEURL=${1#*=}
             ;;
-        --dir=?*)
-            DIR=${1#*=}
+        --install-dir=?*)
+            INSTALL_DIR=${1#*=}
             ;;
         --env=?*)
             ENVIRONMENT=${1#*=}
@@ -147,11 +147,9 @@ while :; do
     shift
 done
 
-#echo "$PROJECT_INIT"; exit 0;
-
 if [ -z "${PACKAGEURL}" ]; then usage_exit "ERROR: Please provide package url (e.g. --package-url=s3://mybucket/package.tar.gz)"; fi
 if [ -z "${DATABASEURL}" ]; then usage_exit "ERROR: Please provide database url (e.g. --database-url=s3://mybucket/database.sql.gz)"; fi
-if [ -z "${DIR}" ]; then usage_exit "ERROR: Please provide a target dircteory (e.g. --dir=/var/www/demo/)"; fi
+if [ -z "${INSTALL_DIR}" ]; then usage_exit "ERROR: Please provide a target dircteory (e.g. --dir=/var/www/demo/)"; fi
 if [ -z "${ENVIRONMENT}" ]; then usage_exit "ERROR: Please provide an environment code (e.g. --env=staging)"; fi
 
 # Create tmp dir and make sure it's going to be deleted in any case
@@ -165,7 +163,8 @@ trap cleanup EXIT
 EXTRAPACKAGEURL=${PACKAGEURL/.tar.gz/.extra.tar.gz}
 
 echo "Creating install folder"
-mkdir "${DIR}" || error_exit "Error while creating install folder"
+echo "mkdir ${INSTALL_DIR}"
+eval mkdir "${INSTALL_DIR}" || error_exit "Error while creating install folder"
 
 ########################################################################################################################
 # Step 1: get the package via http, S3 or local file
@@ -183,11 +182,11 @@ fi
 # Step 2: extract files into release folder
 ########################################################################################################################
 echo "Extracting base package"
-tar xzf "${TMPDIR}/package.tar.gz" -C "${DIR}" || error_exit "Error while extracting base package"
+tar xzf "${TMPDIR}/package.tar.gz" -C "${INSTALL_DIR}" || error_exit "Error while extracting base package"
 
 if [ "${EXTRA}" == 1 ] ; then
     echo "Extracting extra package on top of base package"
-    tar xzf "${TMPDIR}/package.extra.tar.gz" -C "${DIR}" || error_exit "Error while extracting extra package"
+    tar xzf "${TMPDIR}/package.extra.tar.gz" -C "${INSTALL_DIR}" || error_exit "Error while extracting extra package"
 fi
 
 
@@ -206,16 +205,18 @@ fi
 # Step 4: Download database
 ########################################################################################################################
 echo "Downloading database package..."
-download "${DATABASEURL}" "${DIR}/database.sql.gz"
+download "${DATABASEURL}" "${INSTALL_DIR}/database.sql.gz"
 
 
 
 ########################################################################################################################
 # Step 5: Start docker containers
 ########################################################################################################################
-if [ ! -f "${DIR}/docker-compose.yml" ]; then error_exit "This package does not yet support docker containers"; fi
+if [ ! -f "${INSTALL_DIR}/docker-compose.yml" ]; then
+	error_exit "This package does not yet support docker containers";
+fi
 echo "Starting docker containers"
-cd "${DIR}" || error_exit "Cannot enter installation dir"
+cd "${INSTALL_DIR}" || error_exit "Cannot enter installation dir"
 docker-compose up -d
 
 
