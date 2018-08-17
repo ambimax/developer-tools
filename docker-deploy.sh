@@ -66,7 +66,7 @@ function show_help {
     echo "$0 \ "
     echo "      --package-url=<packageUrl> \ "
     echo "      --database-url=<databaseUrl> \ "
-    echo "      --dir=<installDir> \ "
+    echo "      --install-dir=<installDir> \ "
     echo "      [--env=<environment>] \ "
     echo "      [--extra-package] \ "
     echo "      [--start-containers] \ "
@@ -77,7 +77,7 @@ function show_help {
     echo ""
     echo "--package-url         Path to the build package (http, S3 or local file)"
     echo "--database-url        Path to the database package (http, S3 or local file)"
-    echo "--dir                 Target dir"
+    echo "--install-dir                 Target dir"
     echo "--env                 Environment docker, devbox, staging (optional, default: docker)"
     echo "--extra-package       Install extra build package (optional)"
     echo "--start-containers    Start docker containers after downloading (optional)"
@@ -147,7 +147,6 @@ while :; do
     shift
 done
 
-
 if [ -z "${PACKAGEURL}" ]; then usage_exit "ERROR: Please provide package url (e.g. --package-url=s3://mybucket/package.tar.gz)"; fi
 if [ -z "${DATABASEURL}" ]; then usage_exit "ERROR: Please provide database url (e.g. --database-url=s3://mybucket/database.sql.gz)"; fi
 if [ -z "${INSTALL_DIR}" ]; then usage_exit "ERROR: Please provide a target dircteory (e.g. --dir=/var/www/demo/)"; fi
@@ -165,7 +164,7 @@ EXTRAPACKAGEURL=${PACKAGEURL/.tar.gz/.extra.tar.gz}
 
 echo "Creating install folder"
 echo "mkdir ${INSTALL_DIR}"
-mkdir "${INSTALL_DIR}" || error_exit "Error while creating install folder"
+eval mkdir "${INSTALL_DIR}" || error_exit "Error while creating install folder"
 
 ########################################################################################################################
 # Step 1: get the package via http, S3 or local file
