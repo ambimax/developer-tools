@@ -19,7 +19,7 @@ script:
   - >
     ./docker-deploy.sh --package-url=${PACKAGE_URL} \
       --database-url="${DATABASE_URL}" \
-      --dir=${DIR} \
+      --install-dir=${DIR} \
       --extra-package \
       --start-containers \
       --project-init="docker-compose exec nginx sh -c \"echo 'docker::init' > /var/www/htdocs/init.html\""
