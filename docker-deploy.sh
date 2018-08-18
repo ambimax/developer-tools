@@ -111,7 +111,8 @@ while :; do
             DATABASEURL=${1#*=}
             ;;
         --install-dir=?*)
-            INSTALL_DIR=${1#*=}
+        	_PATH=${1#*=}
+        	INSTALL_DIR="${_PATH/#\~/$HOME}"
             ;;
         --env=?*)
             ENVIRONMENT=${1#*=}
@@ -147,6 +148,7 @@ while :; do
     shift
 done
 
+
 if [ -z "${PACKAGEURL}" ]; then usage_exit "ERROR: Please provide package url (e.g. --package-url=s3://mybucket/package.tar.gz)"; fi
 if [ -z "${DATABASEURL}" ]; then usage_exit "ERROR: Please provide database url (e.g. --database-url=s3://mybucket/database.sql.gz)"; fi
 if [ -z "${INSTALL_DIR}" ]; then usage_exit "ERROR: Please provide a target dircteory (e.g. --dir=/var/www/demo/)"; fi
@@ -164,7 +166,7 @@ EXTRAPACKAGEURL=${PACKAGEURL/.tar.gz/.extra.tar.gz}
 
 echo "Creating install folder"
 echo "mkdir ${INSTALL_DIR}"
-eval mkdir "${INSTALL_DIR}" || error_exit "Error while creating install folder"
+mkdir "${INSTALL_DIR}" || error_exit "Error while creating install folder"
 
 ########################################################################################################################
 # Step 1: get the package via http, S3 or local file
