@@ -7,13 +7,7 @@
     <a href="https://travis-ci.org/ambimax/developer-tools"><img alt="Build Status" src="https://travis-ci.org/ambimax/developer-tools.svg?branch=master"></a>
 </p>
 
-# ambimax® Developer Tools
-
-[![Build Status](https://travis-ci.org/ambimax/developer-tools.svg?branch=master)](https://travis-ci.org/ambimax/developer-tools)
-
-Some small tools to ease developer life.
-
-## Install developer tools
+## Installation
 
 **docker deploy**
 
